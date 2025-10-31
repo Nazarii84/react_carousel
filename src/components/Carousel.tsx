@@ -24,6 +24,7 @@ const Carousel: React.FC<Props> = ({
   const [itemWidth, setItemWidth] = useState(initialItemWidth);
   const [frameSize, setFrameSize] = useState(initialFrameSize);
   const [step, setStep] = useState(initialStep);
+  const [animMs, setAnimMs] = useState(animationDuration);
 
   const [index, setIndex] = useState(0);
   const maxStart = Math.max(0, images.length - frameSize);
@@ -58,7 +59,10 @@ const Carousel: React.FC<Props> = ({
   };
 
   const frameStyle: React.CSSProperties = useMemo(
-    () => ({ width: `${frameSize * itemWidth}px`, overflow: 'hidden' }),
+    () => ({
+      width: `${frameSize * itemWidth}px`,
+      overflow: 'hidden',
+    }),
     [frameSize, itemWidth],
   );
 
@@ -66,9 +70,9 @@ const Carousel: React.FC<Props> = ({
     () => ({
       width: `${images.length * itemWidth}px`,
       transform: `translateX(${-index * itemWidth}px)`,
-      transition: `transform ${animationDuration}ms`,
+      transition: `transform ${animMs}ms`,
     }),
-    [images.length, itemWidth, index, animationDuration],
+    [images.length, itemWidth, index, animMs],
   );
 
   const onItemWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,34 +96,41 @@ const Carousel: React.FC<Props> = ({
     setIndex(0);
   };
 
+  const onAnimChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = Number(e.target.value) || 0;
+
+    setAnimMs(Math.max(0, val));
+  };
+
   return (
     <div className="Carousel">
-      <div className="Carousel">
-        <div className="Carousel__panel">
-          <label htmlFor="itemId">itemWidth</label>
-          <input
-            id="itemId"
-            type="number"
-            value={itemWidth}
-            onChange={onItemWidthChange}
-          />
+      <div className="Carousel__panel">
+        <label htmlFor="itemId">itemWidth</label>
+        <input
+          id="itemId"
+          type="number"
+          value={itemWidth}
+          onChange={onItemWidthChange}
+        />
 
-          <label htmlFor="frameId">frameSize</label>
-          <input
-            id="frameId"
-            type="number"
-            value={frameSize}
-            onChange={onFrameSizeChange}
-          />
+        <label htmlFor="frameId">frameSize</label>
+        <input
+          id="frameId"
+          type="number"
+          value={frameSize}
+          onChange={onFrameSizeChange}
+        />
 
-          <label htmlFor="stepId">step</label>
-          <input
-            id="stepId"
-            type="number"
-            value={step}
-            onChange={onStepChange}
-          />
-        </div>
+        <label htmlFor="stepId">step</label>
+        <input id="stepId" type="number" value={step} onChange={onStepChange} />
+
+        <label htmlFor="animId">animationDuration</label>
+        <input
+          id="animId"
+          type="number"
+          value={animMs}
+          onChange={onAnimChange}
+        />
       </div>
 
       <div className="Carousel__frame" style={frameStyle}>
@@ -144,7 +155,9 @@ const Carousel: React.FC<Props> = ({
       <div className="Carousel__controls">
         <button
           type="button"
-          className={`Carousel__btn Carousel__btn--prev ${!canPrev && !infinite ? 'disabled' : ''}`}
+          className={`Carousel__btn Carousel__btn--prev ${
+            !canPrev && !infinite ? 'disabled' : ''
+          }`}
           onClick={goPrev}
           data-cy="prev"
           aria-disabled={!canPrev && !infinite ? 'true' : 'false'}
@@ -154,7 +167,9 @@ const Carousel: React.FC<Props> = ({
 
         <button
           type="button"
-          className={`Carousel__btn Carousel__btn--next ${!canNext && !infinite ? 'disabled' : ''}`}
+          className={`Carousel__btn Carousel__btn--next ${
+            !canNext && !infinite ? 'disabled' : ''
+          }`}
           onClick={goNext}
           data-cy="next"
           aria-disabled={!canNext && !infinite ? 'true' : 'false'}
